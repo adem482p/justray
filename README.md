@@ -2,14 +2,13 @@
 
 justray is a StatusNotifierItem host for Linux.
 
-Most tray hosts assume a status bar or panel to reside in. I see no use for such UI; I want a ui i can toggle with a keyboard shortcut.
+Most tray hosts assume a status bar or panel to reside in. This one doesn't. I wanted a ui i can toggle with a keyboard shortcut without these assumptions.
 
 ## Features
 
-- **Single binary** for host, CLI, and UI.
-- **In-process UI**: the UI is not a separate process.
-- **No-polling**: owns the SNI watcher, tracks items by reacting to D-Bus signals.
-- **UI**: information tooltips, theme-based icons, pixmap-based icons, DBusMenu menus.
+- **Single binary**: Daemon (in process UI) and CLI
+- **No-polling**: tracks items by owning the SNI watcher to react to D-Bus signals. 
+- **UI**: information tooltips, theme-based icons, pixmap-based icons, context menus.
 - **Safety**:
   - Readiness pipe, per-socket PID files, process-aware stop/restart, socket checks and 0600 permissions.
   - Bounded D-Bus/IPC timeouts and async/coalesced SNI refreshes.
