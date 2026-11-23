@@ -2,7 +2,7 @@
 
 A StatusNotifierItem host for Linux.
 
-Most tray hosts assume a status bar or panel to reside in. I see no use for such UI; I want a ui i can toggle it with a keyboard shortcut.
+Most tray hosts assume a status bar or panel to reside in. I see no use for such UI; I want a ui i can toggle with a keyboard shortcut.
 
 ## Features
 
