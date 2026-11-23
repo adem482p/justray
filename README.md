@@ -8,11 +8,17 @@ Most tray hosts assume a status bar or panel to reside in. This one doesn't. I w
 
 - **Single binary**: Daemon (in process UI) and CLI
 - **No-polling**: tracks items by owning the SNI watcher to react to D-Bus signals. 
-- **UI**: information tooltips, theme-based icons, pixmap-based icons, context menus.
+- **UI**: information tooltips, theme-based icons, pixmap-based icons, context menus, live color-scheme/palette changes.
 - **Safety**:
   - Readiness pipe, per-socket PID files, process-aware stop/restart, socket checks and 0600 permissions.
   - Bounded D-Bus/IPC timeouts and async/coalesced SNI refreshes.
   - Debug-tag mutex for deadlock/lock misuse.
+
+## Screenshots
+
+| Light theme | Dark theme |
+|-------------|------------|
+| <img src="assets/light.png" width="400"/> | <img src="assets/dark.png" width="400"/> |
 
 ## Build
 

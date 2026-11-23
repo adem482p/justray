@@ -1,5 +1,8 @@
 #include <QApplication>
 #include <QGuiApplication>
+#include <QStyleHints>
+#include <QStyle>
+#include <QStyleFactory>
 #include <QScreen>
 #include <QEvent>
 #include <QKeyEvent>
@@ -45,6 +48,27 @@
 #include <QTimer>
 #include <cstdlib>
 #include <cstring>
+
+// Qt 6 Unix platform themes QGnomeTheme [QTBUG-127028], QGtk3Theme
+// [QTBUG-130385] and QXdgDesktopPortalTheme [QTBUG-151800] report runtime
+// color-scheme changes (colorSchemeChanged/ThemeChange [QTBUG-116197]) but do
+// not refresh QGuiApplication::palette(): QPlatformTheme::palette() builds the
+// system palette lazily and caches it [QTBUG-145386], and invalidation via
+// requestColorScheme() is the theme's responsibility, while these themes'
+// automatic update paths only call handleThemeChange() (and
+// QXdgDesktopPortalTheme additionally delegates palette() to a base theme
+// without forwarding invalidation); QGuiApplicationPrivate::handleThemeChanged()
+// does not invalidate palettes centrally, so widgets keep the startup palette
+// until the app is restarted. Regenerate Fusion's standardPalette() from the
+// already-updated colorScheme and set it on QGuiApplication to bypass that
+// stale cache and make the palette follow live changes.
+static void refreshThemePalette()
+{
+    if (auto *style = QStyleFactory::create("Fusion")) {
+        QGuiApplication::setPalette(style->standardPalette());
+        delete style;
+    }
+}
 
 static QString socketPath() {
     const char *e = std::getenv("TRAY_SOCKET");
@@ -287,7 +311,32 @@ public:
         connectWatch();
     }
 
+    void refreshTheme() {
+        g_pixmapCache.clear();
+        rebuild();
+
+        // Unpolish and repolish the window's style to refresh theme
+        if (style()) {
+            style()->unpolish(this);
+            style()->polish(this);
+        }
+
+        // Update the window
+        update();
+
+        // Recurse to child widgets for a full refresh
+        const QList<QWidget *> children = findChildren<QWidget *>();
+        for (QWidget *child : children) {
+            if (child->style()) {
+                child->style()->unpolish(child);
+                child->style()->polish(child);
+            }
+            child->update();
+        }
+    }
+
     ~Window() {
+        g_window = nullptr;
         if (watchNotifier) {
             watchNotifier->setEnabled(false);
             delete watchNotifier;
@@ -545,6 +594,14 @@ extern "C" void runQtUI() {
     static char **argv = nullptr;
     QApplication app(argc, argv);
     QGuiApplication::setApplicationName("tray");
+
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,
+                     &app, []() {
+        refreshThemePalette();
+        if (g_window)
+            static_cast<Window *>(g_window)->refreshTheme();
+    });
+
     Window w;
     if (g_quitRequested.load()) {
         QTimer::singleShot(0, &app, &QApplication::quit);
