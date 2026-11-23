@@ -1,10 +1,10 @@
 # Maintainer: adem <adem482p@users.noreply.github.com>
-pkgname=tray
+pkgname=justray
 pkgver=r2.g3a77c66
 pkgrel=1
 pkgdesc='A StatusNotifierItem host for Linux'
 arch=('x86_64' 'aarch64')
-url='https://github.com/adem482p/tray'
+url='https://github.com/adem482p/justray'
 license=('unknown')
 depends=('dbus' 'glibc' 'libgcc' 'libstdc++' 'qt6-base')
 makedepends=('go>=1.27')
@@ -13,8 +13,8 @@ optdepends=(
   'qt6-svg: SVG icon theme support'
 )
 _commit=3a77c661c08b4164b4cd7290f400517af6f8aa42
-source=("$pkgname-$pkgver.tar.gz::https://github.com/adem482p/tray/archive/$_commit.tar.gz")
-sha256sums=('b4878f8bd8d1fe8979aabedfb3b0c00bf76ef2251b16280b5faef8616612405e')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/adem482p/justray/archive/$_commit.tar.gz")
+sha256sums=('b0f4d62282d34975de67f73d3d184f2c119b3bdf6b4f7eef690f2c784ee4ffe4')
 
 build() {
   cd "$pkgname-${_commit}"
