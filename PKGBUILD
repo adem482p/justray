@@ -1,23 +1,29 @@
 # Maintainer: adem <adem482p@users.noreply.github.com>
 pkgname=justray
-pkgver=r2.g3a77c66
+pkgver=r6.5dc9632
 pkgrel=1
 pkgdesc='A StatusNotifierItem host for Linux'
 arch=('x86_64' 'aarch64')
 url='https://github.com/adem482p/justray'
 license=('unknown')
 depends=('dbus' 'glibc' 'libgcc' 'libstdc++' 'qt6-base')
-makedepends=('go>=1.27')
+makedepends=('go>=1.27' 'git')
 optdepends=(
   'hicolor-icon-theme: fallback icon theme'
   'qt6-svg: SVG icon theme support'
 )
-_commit=3a77c661c08b4164b4cd7290f400517af6f8aa42
-source=("$pkgname-$pkgver.tar.gz::https://github.com/adem482p/justray/archive/$_commit.tar.gz")
-sha256sums=('b0f4d62282d34975de67f73d3d184f2c119b3bdf6b4f7eef690f2c784ee4ffe4')
+source=("git+https://github.com/adem482p/justray.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$pkgname"
+  # Use commit count and short hash for version (no tags in repo)
+  # Format: r<commit count>.<short hash>
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+}
 
 build() {
-  cd "$pkgname-${_commit}"
+  cd "$pkgname"
   export CGO_ENABLED=1
   export CGO_CPPFLAGS="${CPPFLAGS}"
   export CGO_CFLAGS="${CFLAGS}"
@@ -29,14 +35,14 @@ build() {
 }
 
 check() {
-  cd "$pkgname-${_commit}"
+  cd "$pkgname"
   export CGO_ENABLED=1
   export GOTOOLCHAIN=local
   go test -tags debug ./...
 }
 
 package() {
-  cd "$pkgname-${_commit}"
+  cd "$pkgname"
   install -Dm755 tray "$pkgdir/usr/bin/tray"
   install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
 }
