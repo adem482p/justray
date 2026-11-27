@@ -1,8 +1,9 @@
 package ui
 
 /*
-#cgo CXXFLAGS: -std=c++17 -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/qt6/QtDBus
-#cgo LDFLAGS: -lQt6Widgets -lQt6Gui -lQt6Core -lQt6DBus
+#cgo pkg-config: Qt6Widgets Qt6Gui Qt6Core Qt6DBus
+#cgo CXXFLAGS: -std=c++17
+#cgo LDFLAGS: -lstdc++
 extern void runQtUI();
 extern void uiQuit();
 extern void uiShow();
